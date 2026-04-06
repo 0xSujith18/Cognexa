@@ -1,6 +1,19 @@
 import OpenAI from 'openai'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+// Lazy initialization of OpenAI client
+const getOpenAIClient = () => {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey || apiKey === 'sk-your-openai-api-key-here') {
+    return null;
+  }
+  const isXAI = apiKey.startsWith('xai-');
+  return new OpenAI({
+    apiKey,
+    baseURL: isXAI ? 'https://api.x.ai/v1' : undefined
+  });
+};
+
+const openai = getOpenAIClient();
 
 // ── Fallback question bank (used when OpenAI is unavailable) ─────────────────
 const FALLBACK_QUESTIONS = (role, level, stack) => [

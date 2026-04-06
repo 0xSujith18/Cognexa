@@ -9,35 +9,49 @@ import ResultsView    from './pages/ResultsView'
 import Layout from './components/Layout'
 
 function PrivateRoute({ children }) {
-  const { token } = useAuth()
-  return token ? children : <Navigate to="/login" replace />
+  const { token, loading } = useAuth();
+  if (loading) return null;
+  return token ? children : <Navigate to="/login" replace />;
 }
 
 function PublicRoute({ children }) {
-  const { token } = useAuth()
-  return token ? <Navigate to="/dashboard" replace /> : children
+  const { token, loading } = useAuth();
+  if (loading) return null;
+  return token ? <Navigate to="/dashboard" replace /> : children;
 }
 
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          {/* Public */}
-          <Route path="/login"    element={<PublicRoute><Login /></PublicRoute>} />
-          <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
-
-          {/* Protected */}
-          <Route element={<Layout />}>
-            <Route path="/dashboard"  element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-            <Route path="/setup"      element={<PrivateRoute><SessionSetup /></PrivateRoute>} />
-            <Route path="/interview/:sessionId" element={<PrivateRoute><InterviewRoom /></PrivateRoute>} />
-            <Route path="/results/:sessionId"   element={<PrivateRoute><ResultsView /></PrivateRoute>} />
-          </Route>
-
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
-      </BrowserRouter>
+      <AppContent />
     </AuthProvider>
-  )
+  );
+}
+
+function AppContent() {
+  const { loading } = useAuth();
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* Public */}
+        <Route path="/login"    element={<PublicRoute><Login /></PublicRoute>} />
+        <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+
+        {/* Protected */}
+        <Route element={<Layout />}>
+          <Route path="/dashboard"  element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+          <Route path="/setup"      element={<PrivateRoute><SessionSetup /></PrivateRoute>} />
+          <Route path="/interview/:sessionId" element={<PrivateRoute><InterviewRoom /></PrivateRoute>} />
+          <Route path="/results/:sessionId"   element={<PrivateRoute><ResultsView /></PrivateRoute>} />
+        </Route>
+
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
