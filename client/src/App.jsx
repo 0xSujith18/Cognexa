@@ -7,6 +7,7 @@ import SessionSetup   from './pages/SessionSetup'
 import InterviewRoom  from './pages/InterviewRoom'
 import ResultsView    from './pages/ResultsView'
 import Layout from './components/Layout'
+import LoadingScreen from './components/LoadingScreen'
 
 function PrivateRoute({ children }) {
   const { token, loading } = useAuth();
