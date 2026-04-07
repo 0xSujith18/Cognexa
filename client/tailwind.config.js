@@ -38,6 +38,16 @@ export default {
           amber:  '#f59e0b',
           rose:   '#f43f5e',
           emerald:'#10b981',
+        },
+        // Semantic Theme Colors
+        text: {
+          main:      'rgb(var(--text-main))',
+          secondary: 'rgb(var(--text-secondary))',
+          muted:     'rgb(var(--text-muted))',
+        },
+        surface: {
+          card:   'rgb(var(--surface-card))',
+          button: 'rgb(var(--surface-button))',
         }
       },
       animation: {

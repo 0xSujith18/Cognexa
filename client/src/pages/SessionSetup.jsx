@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { motion } from 'framer-motion'
 import {
   Briefcase, GraduationCap, Code2, ArrowRight, Brain,
   ChevronDown, Sparkles, AlertCircle, Cpu
@@ -61,9 +62,9 @@ export default function SessionSetup() {
           <Sparkles size={16} className="text-brand-400" />
           <span className="section-label">Setup</span>
         </div>
-        <h1 className="text-2xl font-bold text-white">Configure Your Interview</h1>
-        <p className="text-gray-400 text-sm mt-1">
-          Cognexa will generate 10 adaptive questions tailored to your role and level.
+        <h1 className="text-2xl font-bold text-main">Configure Your Interview</h1>
+        <p className="text-muted text-sm mt-1">
+          Cognexa will generate 5 adaptive questions tailored to your role and level.
         </p>
       </div>
 
@@ -78,16 +79,20 @@ export default function SessionSetup() {
         <div className="glass rounded-2xl p-6">
           <div className="flex items-center gap-2 mb-4">
             <Briefcase size={18} className="text-brand-400" />
-            <h2 className="font-semibold text-gray-200">Target Role</h2>
+            <h2 className="font-bold text-secondary">Target Role</h2>
             <span className="text-accent-rose ml-1 text-sm">*</span>
           </div>
-          <div className="relative">
-            <select id="role-select" value={role} onChange={e => setRole(e.target.value)}
-              className="input appearance-none pr-10 cursor-pointer">
-              <option value="">Select a role…</option>
-              {ROLES.map(r => <option key={r} value={r}>{r}</option>)}
+          <div className="relative group">
+            <select 
+              id="role-select" 
+              value={role} 
+              onChange={e => setRole(e.target.value)}
+              className="input-fancy pr-10 cursor-pointer appearance-none bg-button-theme"
+            >
+              <option value="" className="bg-card-theme">Select a role…</option>
+              {ROLES.map(r => <option key={r} value={r} className="bg-card-theme">{r}</option>)}
             </select>
-            <ChevronDown size={16} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+            <ChevronDown size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted pointer-events-none group-focus-within:text-brand-400 transition-colors" />
           </div>
         </div>
 
@@ -95,20 +100,20 @@ export default function SessionSetup() {
         <div className="glass rounded-2xl p-6">
           <div className="flex items-center gap-2 mb-4">
             <GraduationCap size={18} className="text-brand-400" />
-            <h2 className="font-semibold text-gray-200">Experience Level</h2>
+            <h2 className="font-bold text-secondary">Experience Level</h2>
             <span className="text-accent-rose ml-1 text-sm">*</span>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            {LEVELS.map(({ value, label, desc, color }) => (
+            {LEVELS.map(({ value, label, desc }) => (
               <button key={value} type="button" id={`level-${value.toLowerCase()}`}
                 onClick={() => setLevel(value)}
-                className={`p-4 rounded-xl border text-left transition-all duration-200
+                className={`p-4 rounded-xl border text-left transition-all duration-300
                   ${level === value
-                    ? `bg-brand-600/20 border-brand-500/40 shadow-lg shadow-brand-600/10`
-                    : 'bg-surface-700/50 border-white/5 hover:border-white/15'
+                    ? `bg-brand-500/10 border-brand-500 shadow-[0_0_20px_rgba(99,102,241,0.15)] scale-[1.02]`
+                    : 'bg-button-theme border-white/5 hover:border-brand-500/30'
                   }`}>
-                <p className="font-semibold text-sm text-white">{label}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{desc}</p>
+                <p className={`font-bold text-sm ${level === value ? 'text-brand-400' : 'text-main'}`}>{label}</p>
+                <p className="text-xs text-muted mt-1 font-medium">{desc}</p>
               </button>
             ))}
           </div>
@@ -118,18 +123,18 @@ export default function SessionSetup() {
         <div className="glass rounded-2xl p-6">
           <div className="flex items-center gap-2 mb-1">
             <Code2 size={18} className="text-brand-400" />
-            <h2 className="font-semibold text-gray-200">Tech Stack Focus</h2>
-            <span className="text-gray-500 text-xs ml-auto">(Optional)</span>
+            <h2 className="font-bold text-secondary">Tech Stack Focus</h2>
+            <span className="text-muted text-xs ml-auto font-bold">(Optional)</span>
           </div>
-          <p className="text-xs text-gray-500 mb-4">Select technologies to tailor questions toward.</p>
+          <p className="text-xs text-muted mb-5 font-medium">Select technologies to tailor questions toward.</p>
           <div className="flex flex-wrap gap-2">
             {STACKS.map(s => (
               <button key={s} type="button"
                 onClick={() => toggleStack(s)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all duration-150
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition-all duration-200
                   ${stack.includes(s)
-                    ? 'bg-brand-600/25 border-brand-500/40 text-brand-300'
-                    : 'bg-surface-700/50 border-white/5 text-gray-400 hover:border-white/15 hover:text-gray-300'
+                    ? 'bg-brand-500 text-white border-brand-500 shadow-lg shadow-brand-500/20 scale-105'
+                    : 'bg-button-theme border-white/5 text-muted hover:border-brand-500/30 hover:text-main'
                   }`}>
                 {s}
               </button>
@@ -144,28 +149,46 @@ export default function SessionSetup() {
 
         {/* Preview + Submit */}
         {(role || level) && (
-          <div className="glass-light rounded-2xl p-5 border border-brand-500/20 animate-slide-up">
-            <div className="flex items-center gap-2 mb-2">
-              <Cpu size={15} className="text-brand-400" />
-              <span className="text-xs font-semibold text-brand-400 uppercase tracking-widest">Session Preview</span>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="glass rounded-3xl p-6 border border-brand-500/20 relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-24 h-24 bg-brand-500/5 blur-2xl pointer-events-none" />
+            <div className="flex items-center gap-2 mb-3">
+              <Cpu size={16} className="text-brand-400" />
+              <span className="text-[10px] font-bold text-brand-400 uppercase tracking-[0.2em]">Session Preview</span>
             </div>
-            <p className="text-white font-medium">
+            <p className="text-main font-bold text-lg">
               {role || '—'}{level ? ` (${level})` : ''}
-              {stack.length > 0 ? ` · ${stack.join(', ')}` : ''}
             </p>
-            <p className="text-xs text-gray-500 mt-1">10 questions · 6 Technical · 2 Behavioral · 2 Situational</p>
-          </div>
+            {stack.length > 0 && (
+              <p className="text-sm text-secondary font-medium mt-1">
+                <span className="text-muted">Tech Focus:</span> {stack.join(', ')}
+              </p>
+            )}
+            <div className="flex items-center gap-4 mt-4 pt-4 border-t border-white/[0.05]">
+               <div className="flex items-center gap-1.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse" />
+                  <span className="text-[10px] font-bold text-muted uppercase tracking-widest text-center">5 Questions Total</span>
+               </div>
+               <div className="flex items-center gap-1.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-accent-violet animate-pulse" />
+                  <span className="text-[10px] font-bold text-muted uppercase tracking-widest text-center">AI Adaptive</span>
+               </div>
+            </div>
+          </motion.div>
         )}
 
         <button id="start-interview-btn" type="submit" disabled={loading || !role || !level}
-          className="btn-primary w-full justify-center py-4 text-base">
+          className="btn-premium w-full h-14 justify-center text-base">
           {loading ? (
-            <span className="flex items-center gap-2">
+            <span className="flex items-center gap-3 font-bold">
               <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              Generating questions…
+              Generating Environment…
             </span>
           ) : (
-            <><Brain size={20} />Start AI Interview<ArrowRight size={18} /></>
+            <><Brain size={20} /><span className="font-bold tracking-wide">Start Secure Interview</span><ArrowRight size={20} /></>
           )}
         </button>
       </form>

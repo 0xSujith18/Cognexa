@@ -9,6 +9,7 @@ import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer,
   BarChart, Bar, XAxis, YAxis, Tooltip, Cell, CartesianGrid
 } from 'recharts'
+import { useEffect, useState } from 'react'
 
 const SCORE_COLOR = s =>
   s >= 80 ? '#10b981' : s >= 60 ? '#06b6d4' : s >= 40 ? '#f59e0b' : '#f43f5e'
@@ -35,8 +36,8 @@ function ScoreGauge({ score }) {
           strokeLinecap="round" style={{ transition: 'stroke-dashoffset 1.5s ease-out' }} />
       </svg>
       <div className="absolute text-center">
-        <p className="text-3xl font-bold text-white">{score}</p>
-        <p className="text-xs text-gray-500">/ 100</p>
+        <p className="text-3xl font-black text-main">{score}</p>
+        <p className="text-xs text-muted font-bold">/ 100</p>
       </div>
     </div>
   )
@@ -45,11 +46,11 @@ function ScoreGauge({ score }) {
 function ScoreBar({ label, value, weight }) {
   return (
     <div>
-      <div className="flex items-center justify-between text-xs mb-1.5">
-        <span className="text-gray-400 font-medium">{label}</span>
-        <span className="text-gray-300 font-semibold">{value}/10 <span className="text-gray-600">({weight}%)</span></span>
+      <div className="flex items-center justify-between text-xs mb-2">
+        <span className="text-muted font-bold">{label}</span>
+        <span className="text-main font-bold">{value}/10 <span className="text-muted/50">({weight}%)</span></span>
       </div>
-      <div className="h-2 bg-surface-600 rounded-full overflow-hidden">
+      <div className="h-2 bg-button-theme rounded-full overflow-hidden border border-white/5">
         <div className="h-full rounded-full transition-all duration-1000"
           style={{ width: `${value * 10}%`, backgroundColor: SCORE_COLOR(value * 10) }} />
       </div>
@@ -72,12 +73,12 @@ function QuestionAccordion({ q, idx }) {
           {idx + 1}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-gray-200 truncate">{q.question_text}</p>
-          <p className="text-xs text-gray-500 mt-0.5 capitalize">{q.type} · {q.difficulty}</p>
+          <p className="text-sm font-bold text-secondary truncate">{q.question_text}</p>
+          <p className="text-xs text-muted mt-1 font-bold capitalize">{q.type} · {q.difficulty}</p>
         </div>
         <div className="flex items-center gap-3 shrink-0">
-          <span className="text-lg font-bold" style={{ color: SCORE_COLOR(overall) }}>{overall}</span>
-          {open ? <ChevronUp size={16} className="text-gray-500" /> : <ChevronDown size={16} className="text-gray-500" />}
+          <span className="text-lg font-black" style={{ color: SCORE_COLOR(overall) }}>{overall}</span>
+          {open ? <ChevronUp size={16} className="text-muted" /> : <ChevronDown size={16} className="text-muted" />}
         </div>
       </button>
 
@@ -85,8 +86,8 @@ function QuestionAccordion({ q, idx }) {
         <div className="px-5 pb-5 border-t border-white/5 pt-4 animate-slide-up space-y-4">
           {/* Answer */}
           <div>
-            <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-2">Your Answer</p>
-            <p className="text-sm text-gray-300 bg-surface-700/50 rounded-xl p-4 leading-relaxed">{q.answer || '—'}</p>
+            <p className="text-xs text-muted uppercase tracking-widest font-bold mb-3">Your Answer</p>
+            <p className="text-sm text-main bg-button-theme rounded-2xl p-5 leading-relaxed border border-white/5">{q.answer || '—'}</p>
           </div>
 
           {/* Score bars */}
@@ -106,7 +107,7 @@ function QuestionAccordion({ q, idx }) {
               </p>
               <ul className="space-y-1.5">
                 {q.evaluation.strengths.map((s, i) => (
-                  <li key={i} className="text-sm text-gray-300 flex items-start gap-2">
+                  <li key={i} className="text-sm text-secondary font-medium flex items-start gap-2">
                     <span className="text-accent-emerald mt-0.5">▸</span>{s}
                   </li>
                 ))}
@@ -122,7 +123,7 @@ function QuestionAccordion({ q, idx }) {
               </p>
               <ul className="space-y-1.5">
                 {q.evaluation.improvements.map((imp, i) => (
-                  <li key={i} className="text-sm text-gray-300 flex items-start gap-2">
+                  <li key={i} className="text-sm text-secondary font-medium flex items-start gap-2">
                     <span className="text-accent-amber mt-0.5">▸</span>{imp}
                   </li>
                 ))}
@@ -160,10 +161,11 @@ export default function ResultsView() {
   const report = session?.result
   if (!report) return (
     <div className="flex items-center justify-center h-screen">
-      <div className="glass rounded-2xl p-8 text-center max-w-sm">
-        <Brain size={36} className="text-gray-600 mx-auto mb-4" />
-        <p className="text-gray-400">No results found for this session.</p>
-        <Link to="/dashboard" className="btn-primary mt-4 inline-flex">Back to Dashboard</Link>
+      <div className="glass rounded-3xl p-12 text-center max-w-sm border border-white/5">
+        <Brain size={48} className="text-muted/50 mx-auto mb-6" />
+        <p className="text-main font-bold text-lg mb-2">No Results Found</p>
+        <p className="text-muted font-medium text-sm">We couldn't retrieve the analysis for this session.</p>
+        <Link to="/dashboard" className="btn-premium mt-8 inline-flex">Back to Dashboard</Link>
       </div>
     </div>
   )
@@ -185,8 +187,20 @@ export default function ResultsView() {
     name: `Q${i + 1}`, score: q.evaluation?.overall_score ?? 0
   }))
 
+  const [theme, setTheme] = useState(document.documentElement.getAttribute('data-theme') || 'dark')
+  useEffect(() => {
+    const observer = new MutationObserver(() => { setTheme(document.documentElement.getAttribute('data-theme') || 'dark') })
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+    return () => observer.disconnect()
+  }, [])
+  const isLight = theme === 'light'
+  const textColor = isLight ? '#4b5563' : '#9ca3af'
+  const gridColor = isLight ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.06)'
+  const toolBg = isLight ? '#fff' : '#0f1021'
+
   return (
     <div className="p-8 animate-fade-in max-w-4xl mx-auto min-h-screen">
+      {/* (Previous header and gauge content already updated above) */}
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
@@ -194,21 +208,21 @@ export default function ResultsView() {
             <Sparkles size={14} className="text-brand-400" />
             <span className="section-label">Interview Complete</span>
           </div>
-          <h1 className="text-2xl font-bold text-white">Your Results</h1>
-          <p className="text-gray-400 text-sm mt-0.5">{session?.role} · {session?.level}</p>
+          <h1 className="text-3xl font-extrabold text-main">Your Results</h1>
+          <p className="text-muted font-bold text-sm mt-1">{session?.role} · {session?.level}</p>
         </div>
-        <Link to="/setup" className="btn-primary"><RotateCcw size={16} />New Interview</Link>
+        <Link to="/setup" className="btn-premium"><RotateCcw size={16} />Practice Again</Link>
       </div>
 
       {/* Score hero */}
       <div className="glass rounded-2xl p-8 mb-6 flex flex-col md:flex-row items-center gap-8">
         <ScoreGauge score={report.overall_score} />
         <div className="flex-1 text-center md:text-left">
-          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl border mb-3 ${perf.bg}`}>
+          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl border mb-4 font-bold shadow-lg ${perf.bg}`}>
             <span>{perf.icon}</span>
-            <span className={`font-bold text-lg ${perf.color}`}>{report.performance_level}</span>
+            <span className={`text-lg ${perf.color}`}>{report.performance_level}</span>
           </div>
-          <p className="text-gray-300 text-sm leading-relaxed max-w-md">{report.final_feedback}</p>
+          <p className="text-main font-medium text-sm leading-relaxed max-w-md">{report.final_feedback}</p>
           <div className={`inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-xl text-sm font-semibold border
             ${report.hiring_decision === 'Hire'
               ? 'bg-accent-emerald/20 text-accent-emerald border-accent-emerald/30'
@@ -265,9 +279,9 @@ export default function ResultsView() {
           <h2 className="font-semibold text-accent-emerald mb-4 flex items-center gap-2">
             <CheckCircle size={16} /> Strengths
           </h2>
-          <ul className="space-y-2">
+          <ul className="space-y-3">
             {report.strengths?.map((s, i) => (
-              <li key={i} className="flex items-start gap-2.5 text-sm text-gray-300">
+              <li key={i} className="flex items-start gap-2.5 text-sm text-secondary font-medium">
                 <span className="text-accent-emerald mt-0.5 shrink-0">▸</span>{s}
               </li>
             ))}
@@ -277,9 +291,9 @@ export default function ResultsView() {
           <h2 className="font-semibold text-accent-amber mb-4 flex items-center gap-2">
             <Lightbulb size={16} /> Areas to Improve
           </h2>
-          <ul className="space-y-2">
+          <ul className="space-y-3">
             {report.weaknesses?.map((w, i) => (
-              <li key={i} className="flex items-start gap-2.5 text-sm text-gray-300">
+              <li key={i} className="flex items-start gap-2.5 text-sm text-secondary font-medium">
                 <span className="text-accent-amber mt-0.5 shrink-0">▸</span>{w}
               </li>
             ))}

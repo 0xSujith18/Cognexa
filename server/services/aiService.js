@@ -56,16 +56,17 @@ export async function generateQuestions(role, level, techStack = []) {
   const systemPrompt = `You are COGNEXA, an expert technical interviewer. Generate realistic, role-specific interview questions.
 Always return valid JSON only — no markdown, no explanation.`
 
-  const userPrompt = `Generate exactly 10 interview questions for a ${role} at ${level} experience level.
+  const userPrompt = `Generate exactly 5 interview questions for a ${role} at ${level} experience level.
 ${stackStr}
-Difficulty focus: ${difficultyMap[level] || 'general interview readiness'}.
 
-Distribution:
-- 6 technical questions
-- 2 behavioral questions
-- 2 situational questions
+Variety Constraint: Focus on different sub-topics (e.g., architecture, problem-solving, behavioral) to ensure a unique interview every time. Use the candidate's domain as the base.
 
-Increase complexity gradually. Questions must match real interview standards.
+Difficulty Distribution (TOTAL 5):
+- 2 easy questions
+- 2 medium questions
+- 1 hard question
+
+Questions must be realistic and match industry standards for a ${role}.
 
 Return a JSON array with exactly this structure for each question:
 {

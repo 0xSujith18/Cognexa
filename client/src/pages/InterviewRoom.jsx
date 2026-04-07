@@ -117,41 +117,42 @@ export default function InterviewRoom() {
             <Brain size={18} className="text-white" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-white">{session?.role}</p>
-            <p className="text-xs text-gray-500">{session?.level} Level</p>
+            <p className="text-sm font-bold text-main">{session?.role}</p>
+            <p className="text-xs text-muted font-bold">{session?.level} Level</p>
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1.5 text-gray-400 text-sm">
+          <div className="flex items-center gap-1.5 text-muted text-sm font-bold">
             <Clock size={14} />
             <span className="font-mono">{fmt(elapsed)}</span>
           </div>
-          <div className="glass-light rounded-xl px-3 py-1.5 text-xs text-gray-400">
+          <div className="bg-button-theme rounded-xl border border-white/5 px-3 py-1.5 text-xs text-muted font-bold">
             Q {currentIdx + 1} / {questions.length}
           </div>
         </div>
       </div>
 
       {/* Progress bar */}
-      <div className="h-1.5 bg-surface-600 rounded-full mb-8 overflow-hidden">
-        <div className="h-full progress-bar-fill rounded-full transition-all duration-500"
+      <div className="h-1.5 bg-button-theme rounded-full mb-8 overflow-hidden border border-white/5">
+        <div className="h-full bg-gradient-to-r from-brand-500 to-accent-violet rounded-full transition-all duration-500 shadow-lg shadow-brand-500/20"
           style={{ width: `${progress}%` }} />
       </div>
 
       {currentQ && (
         <>
           {/* Question card */}
-          <div className="glass rounded-2xl p-7 mb-5 animate-slide-up">
-            <div className="flex items-center gap-2 mb-5">
-              <span className={`badge border ${TYPE_COLORS[currentQ.type] || 'bg-surface-600 text-gray-400'}`}>
+          <div className="glass rounded-3xl p-8 mb-5 animate-slide-up border border-white/5 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/5 blur-3xl pointer-events-none" />
+            <div className="flex items-center gap-2 mb-6">
+              <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest border ${TYPE_COLORS[currentQ.type] || 'bg-button-theme text-muted border-white/5'}`}>
                 {currentQ.type}
               </span>
-              <span className={`text-xs font-semibold capitalize ${DIFF_COLORS[currentQ.difficulty] || 'text-gray-400'}`}>
+              <span className={`text-[10px] font-bold uppercase tracking-[0.2em] ml-2 ${DIFF_COLORS[currentQ.difficulty] || 'text-muted'}`}>
                 {currentQ.difficulty}
               </span>
             </div>
 
-            <h2 className="text-lg font-semibold text-white leading-relaxed mb-5">
+            <h2 className="text-xl font-bold text-main leading-relaxed mb-2">
               {currentQ.question_text}
             </h2>
 
@@ -165,14 +166,14 @@ export default function InterviewRoom() {
           </div>
 
           {/* Answer area */}
-          <div className="glass rounded-2xl p-5 mb-4">
-            <div className="flex items-center gap-2 mb-3">
-              <MessageSquare size={15} className="text-gray-500" />
-              <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">Your Answer</span>
+          <div className="glass rounded-3xl p-6 mb-6 border border-white/5">
+            <div className="flex items-center gap-2 mb-4">
+              <MessageSquare size={16} className="text-brand-400" />
+              <span className="text-[10px] text-muted font-bold uppercase tracking-[0.2em]">Your Answer</span>
               {isListening && (
-                <span className="ml-auto flex items-center gap-1.5 text-xs text-accent-rose font-medium">
-                  <span className="w-2 h-2 bg-accent-rose rounded-full recording-pulse" />
-                  Recording…
+                <span className="ml-auto flex items-center gap-1.5 text-xs text-accent-rose font-bold">
+                  <div className="w-2 h-2 bg-accent-rose rounded-full animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.5)]" />
+                  Live Transcript…
                 </span>
               )}
             </div>
@@ -182,8 +183,8 @@ export default function InterviewRoom() {
               value={answer}
               onChange={e => setAnswer(e.target.value)}
               rows={6}
-              placeholder="Type your answer here, or use the microphone button to speak…"
-              className="input resize-none bg-transparent border-0 focus:ring-0 p-0 text-sm leading-relaxed w-full"
+              placeholder="Type your answer here, or use the microphone button for voice-to-text..."
+              className="w-full bg-transparent border-0 focus:ring-0 p-0 text-main font-medium placeholder-muted/50 leading-relaxed resize-none text-base"
             />
           </div>
 
@@ -210,12 +211,12 @@ export default function InterviewRoom() {
             {/* Submit */}
             <button id="submit-answer-btn" onClick={handleSubmit}
               disabled={submitting || !answer.trim()}
-              className="btn-primary px-8">
+              className="btn-premium h-12 px-8">
               {submitting
-                ? <><Loader2 size={16} className="animate-spin" />Evaluating…</>
+                ? <><Loader2 size={16} className="animate-spin" /><span className="font-bold">Evaluating…</span></>
                 : currentIdx + 1 >= questions.length
-                  ? <><Send size={16} />Finish Interview</>
-                  : <><Send size={16} />Submit & Next<ChevronRight size={16} /></>
+                  ? <><Send size={16} /><span className="font-bold">Finish Interview</span></>
+                  : <><span className="font-bold">Submit & Next</span><ChevronRight size={16} /></>
               }
             </button>
           </div>
