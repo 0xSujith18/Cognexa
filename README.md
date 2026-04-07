@@ -53,14 +53,6 @@ cd client && npm install
 cd ../server && npm install
 ```
 
-### 3. Environment Variables
-Create a `.env` file in the `server` directory and fill in your credentials:
-```env
-PORT=5000
-MONGO_URI=mongodb://localhost:27017/cognexa
-JWT_SECRET=your_secure_random_secret
-OPENAI_API_KEY=your_api_key_here
-CLIENT_ORIGIN=http://localhost:3000
 ```
 
 ### 4. Run the Application
@@ -72,7 +64,7 @@ npm run dev
 # In the client directory (in a separate terminal)
 npm run dev
 ```
-The app will be available at [http://localhost:3000](http://localhost:3000).
+
 
 ---
 
@@ -108,4 +100,4 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 ---
 
 ## 🏁 Version
-**v1.0.0 — April 2026**
+**v1.0.0 
